@@ -1,8 +1,10 @@
-let b:verilog_indent_modules = 1
-" syntax clear bsv_ignore
 colorscheme bsv
-" [[ will add begin ... end and take you to the right indentation
-inoremap <buffer> [[ begin<return><return>end<up>u<esc>==a<backspace>
+
+" typing begin will also add end. similarly for module, rule, case
+iabbrev <buffer> begin beginend<up><end>
+iabbrev <buffer> module moduleendmodule<up><end>
+iabbrev <buffer> rule ruleendrule<up><end>
+iabbrev <buffer> case caseendcase<up><end>
 
 source $VIMRUNTIME/macros/matchit.vim
 

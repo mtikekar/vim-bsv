@@ -10,7 +10,7 @@ endif
 " BSV is case-sensitive
 syntax case match
 
-if exists("g:bsv_ignore_semi")
+if exists("g:bsv_ignore_semicolon")
     syntax match bsvIgnore ";"
     syntax match bsvIgnore "::\*;"
     highlight link bsvIgnore Ignore
