@@ -1,6 +1,5 @@
 " Restore default colors
-hi clear
-set background=light 
+set background=light
 
 if exists("syntax_on")
     syntax reset
@@ -30,10 +29,10 @@ hi WarningMsg guibg=white      guifg=red3 gui=bold
 hi Outline_2_match guifg=blue3 guibg=grey83
 
 " syntax elements
-hi Comment guifg=#888888 gui=none ctermfg=Gray
+hi Comment guifg=#666666 gui=none ctermfg=Gray
 
 hi Constant guifg=DarkGreen gui=none ctermfg=DarkGreen
-hi String guifg=DarkGreen gui=italic ctermfg=DarkGreen 
+hi String guifg=DarkGreen gui=italic ctermfg=DarkGreen
 hi link String Number
 hi link String Boolean
 

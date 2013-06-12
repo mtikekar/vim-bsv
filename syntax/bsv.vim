@@ -23,6 +23,10 @@ syntax match bsvAssign "<="
 syntax keyword bsvTodo XXX FIXME TODO contained
 syntax match   bsvComment "//.*$" contains=bsvTodo
 syntax region  bsvComment start="/\*" end="\*/" contains=bsvTodo
+"syntax match   bsvComment "//?.*$" contains=bsvTodo transparent
+"syntax match   bsvComment "//[^?].*$" contains=bsvTodo
+"syntax region  bsvComment start="/\*?" end="\*/" contains=bsvTodo transparent
+"syntax region  bsvComment start="/\*[^?]" end="\*/" contains=bsvTodo
 
 " strings
 syntax region bsvString start=#"# skip=#\\"# end=#"#
@@ -37,7 +41,7 @@ syntax keyword bsvDatatypes Bit UInt Int int Integer Bool Real String Fmt Void M
 syntax keyword bsvDatatypes Tuple2 Tuple3 Tuple4 Tuple5 Tuple6 Tuple7 Tuple8
 
 syntax keyword bsvDatatypes Vector List Valid Invalid Complex FixedPoint InvalidFile
-syntax keyword bsvInterfaces Reg FIFO RegFile Get Put Server Client
+syntax keyword bsvInterfaces Reg FIFO RegFile Get Put Server Client Empty
 syntax keyword bsvTypeclasses Bits Eq Literal RealLiteral Arith Ord Bounded Bitwise BitReduction BitExtend
 
 setlocal iskeyword+=`
@@ -46,10 +50,11 @@ syntax keyword bsvPreproc `include `line `define `undef `resetall `ifdef `ifndef
 syntax keyword bsvConditional if else case matches
 syntax keyword bsvRepeat for while
 syntax keyword bsvKeyword import export
-syntax keyword bsvKeyword typedef enum struct deriving tagged union let
-syntax keyword bsvKeyword module rule function instance interface method return
+syntax keyword bsvKeyword typedef enum struct deriving tagged union let matches
+syntax keyword bsvKeyword module rule function instance interface method rules return
+syntax keyword bsvKeyword numeric type provisos
 
-syntax keyword bsvScope begin end endmodule endfunction endinterface endcase endinstance endrule endaction endmethod nextgroup=bsvScopeIdentifier
+syntax keyword bsvScope begin end endmodule endfunction endinterface endcase endinstance endrule endaction endmethod endrules nextgroup=bsvScopeIdentifier
 syntax match   bsvScopeIdentifier '\v:\S+' contained containedin=bsvScope
 
 " attributes
