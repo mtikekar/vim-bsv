@@ -43,6 +43,7 @@ hi Statement guifg=Blue gui=none
 hi Operator guifg=Black
 
 hi PreProc guifg=DeepPink4 gui=none
+
 hi link Define PreProc
 hi link Include PreProc
 hi link PreCondit PreProc
@@ -56,3 +57,4 @@ hi Ignore guifg=#AAAAAA ctermfg=Gray
 hi! link SpecialKey Identifier
 hi! link Directory Identifier
 hi! link MatchParen Search
+
