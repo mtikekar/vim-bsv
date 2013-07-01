@@ -149,7 +149,7 @@ function! GetBSVIndent(linenum)
         " Indent after function/task/class/package/sequence/clocking/
         " rule/method/interface/covergroup/property/program blocks
     elseif last_line =~ '^\s*\<\(task\|class\|package\)\>' ||
-                \ last_line =~ '^\s*\<\(sequence\|clocking\|rule\|method\|instance\)\>' ||
+                \ last_line =~ '^\s*\<\(sequence\|clocking\|rule\|method\|instance\|typeclass\)\>' ||
                 \ last_line =~ '^\s*\(\w\+\s*:\)\=\s*\<covergroup\>' ||
                 \ last_line =~ '^\s*\<\(property\|program\)\>'
         if last_line !~ '\<end\>\s*' . vlog_comment . '*$' ||
@@ -253,7 +253,7 @@ function! GetBSVIndent(linenum)
     " join/end/endcase/endfunction/endtask/endspecify
     if curr_line =~ '^\s*\<\(join\|join_any\|join_none\|\|end\|endcase\|while\)\>' ||
                 \ curr_line =~ '^\s*\<\(endfunction\|endtask\|endspecify\|endclass\)\>' ||
-                \ curr_line =~ '^\s*\<\(endpackage\|endsequence\|endclocking\|endrule\|endmethod\|endinterface\|endinstance\)\>' ||
+                \ curr_line =~ '^\s*\<\(endpackage\|endsequence\|endclocking\|endrule\|endmethod\|endinterface\|endinstance\|endtypeclass\)\>' ||
                 \ curr_line =~ '^\s*\<\(endgroup\|endproperty\|endprogram\)\>' ||
                 \ curr_line =~ '^\s*}'
         let ind = ind - offset

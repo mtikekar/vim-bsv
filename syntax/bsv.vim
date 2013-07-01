@@ -40,8 +40,8 @@ syntax match   bsvNumber '\v<\d[0-9_]*(.\d[0-9]*)=([eE][+-]=[0-9_]+)=>'
 syntax keyword bsvDatatypes Bit UInt Int int Integer Bool Real String Fmt Void Maybe Ordering Clock Reset Inout Action ActionValue Rules File
 syntax keyword bsvDatatypes Tuple2 Tuple3 Tuple4 Tuple5 Tuple6 Tuple7 Tuple8
 
-syntax keyword bsvDatatypes Vector List Valid Invalid Complex FixedPoint InvalidFile
-syntax keyword bsvInterfaces Reg FIFO RegFile Get Put Server Client Empty
+syntax keyword bsvDatatypes Vector List Valid Invalid Complex FixedPoint InvalidFile Stmt
+syntax keyword bsvInterfaces Reg FIFO FIFOF RegFile Get Put Server Client Empty
 syntax keyword bsvTypeclasses Bits Eq Literal RealLiteral Arith Ord Bounded Bitwise BitReduction BitExtend
 
 setlocal iskeyword+=`
@@ -49,12 +49,12 @@ syntax keyword bsvPreproc `include `line `define `undef `resetall `ifdef `ifndef
 
 syntax keyword bsvConditional if else case matches
 syntax keyword bsvRepeat for while
-syntax keyword bsvKeyword import export
-syntax keyword bsvKeyword typedef enum struct deriving tagged union let matches
-syntax keyword bsvKeyword module rule function instance interface method rules return
-syntax keyword bsvKeyword numeric type provisos
+syntax keyword bsvKeyword import export dependencies determines
+syntax keyword bsvKeyword typedef enum struct deriving tagged union let matches match
+syntax keyword bsvKeyword module rule function instance typeclass interface method rules return action actionvalue begin
+syntax keyword bsvKeyword numeric type provisos seq par
 
-syntax keyword bsvScope begin end endmodule endfunction endinterface endcase endinstance endrule endaction endmethod endrules nextgroup=bsvScopeIdentifier
+syntax keyword bsvScope end endmodule endfunction endinterface endcase endtypeclass endinstance endrule endaction endmethod endrules endactionvalue endseq endpar nextgroup=bsvScopeIdentifier
 syntax match   bsvScopeIdentifier '\v:\S+' contained containedin=bsvScope
 
 " attributes
