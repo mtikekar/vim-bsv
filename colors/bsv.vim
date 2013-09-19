@@ -43,6 +43,7 @@ hi Statement guifg=Blue gui=none
 hi Operator guifg=Black
 
 hi PreProc guifg=DeepPink4 gui=none
+
 hi link Define PreProc
 hi link Include PreProc
 hi link PreCondit PreProc
