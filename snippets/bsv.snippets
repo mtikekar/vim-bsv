@@ -1,0 +1,59 @@
+snippet import
+	import ${1:Standard}::*;
+	${2}
+snippet if
+	if (${1}) begin
+		${2}
+	end
+snippet for
+	for (${1}) begin
+		${2}
+	end
+snippet interface
+	interface ${1:InterfaceName};
+		${2}
+	endinterface
+snippet method
+	method ${1:methodname} (${2});
+		${3}
+	endmethod
+snippet function
+	function ${1:functionname} (${2});
+		${3}
+	endfunction
+snippet module
+	module ${1:modulename} (${2});
+		${3}
+	endmodule
+snippet rule
+	rule ${1:rulename};
+		${2}
+	endrule
+snippet begin
+	begin
+	    ${1}
+	end;
+snippet case
+	case (${1})
+		${2}
+	endcase
+snippet instance
+	instance ${1};
+		${2}
+	endinstance
+snippet typeclass
+	typeclass ${1};
+		${2}
+	endtypeclass
+snippet action action
+	action
+	    ${1}
+	endaction;
+snippet action actionvalue
+	actionvalue
+	    ${1}
+	endactionvalue;
+snippet actionvalue
+	actionvalue
+		${1}
+	endactionvalue;
