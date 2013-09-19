@@ -118,8 +118,6 @@ fire_when_enabled
 no_implicit_conditions
 descending_urgency
 preempts
-internal_scheduling
-method_scheduling
 clock_prefix
 gate_prefix
 reset_prefix
@@ -132,3 +130,18 @@ default_gate_unused
 default_reset
 clock_family
 clock_ancestors
+request
+response
+exposeCurrentClock
+default_clock
+default_reset
+input_clock
+input_reset
+output_clock
+clocked_by
+reset_by
+$display
+$finish
+$format
+$stime
+$time

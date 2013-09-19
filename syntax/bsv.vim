@@ -39,6 +39,8 @@ syntax match   bsvNumber '\v<\d[0-9_]*(.\d[0-9]*)=([eE][+-]=[0-9_]+)=>'
 " types
 syntax keyword bsvDatatypes Bit UInt Int int Integer Bool Real String Fmt Void Maybe Ordering Clock Reset Inout Action ActionValue Rules File
 syntax keyword bsvDatatypes Tuple2 Tuple3 Tuple4 Tuple5 Tuple6 Tuple7 Tuple8
+syntax keyword bsvDatatypes TAdd TSub TMul TDiv TLog TExp TMax TMin
+syntax keyword bsvDatatypes Add Mul Div Log Max
 
 syntax keyword bsvDatatypes Vector List Valid Invalid Complex FixedPoint InvalidFile Stmt
 syntax keyword bsvInterfaces Reg FIFO FIFOF RegFile Get Put Server Client Empty
@@ -53,6 +55,8 @@ syntax keyword bsvKeyword import export dependencies determines
 syntax keyword bsvKeyword typedef enum struct deriving tagged union let matches match
 syntax keyword bsvKeyword module rule function instance typeclass interface method rules return action actionvalue begin
 syntax keyword bsvKeyword numeric type provisos seq par
+syntax keyword bsvKeyword pack unpack valueof valueOf fromInteger when
+syntax keyword bsvKeyword schedule parameter enable ready clocked_by reset_by
 
 syntax keyword bsvScope end endmodule endfunction endinterface endcase endtypeclass endinstance endrule endaction endmethod endrules endactionvalue endseq endpar nextgroup=bsvScopeIdentifier
 syntax match   bsvScopeIdentifier '\v:\S+' contained containedin=bsvScope

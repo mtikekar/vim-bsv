@@ -124,12 +124,12 @@ function! GetBSVIndent(linenum)
             echo vverb_str "De-indent after a multiple-line comment."
         endif
 
-    elseif last_line =~ '^\s*\<\(rule\|method\)\>'
+    elseif last_line =~ '^\s*\<rule\>'
         if last_line !~ '\<end\>\s*' . vlog_comment . '*$' ||
                     \ last_line =~ '\(//\|/\*\).*\(;\|\<end\>\)\s*' . vlog_comment . '*$'
             let ind = ind + offset
             if vverb
-                echo vverb_str "Indent after function/task/class block statement."
+                echo vverb_str "Indent after rule block statement."
             endif
         endif
 
@@ -146,32 +146,20 @@ function! GetBSVIndent(linenum)
                 if vverb | echo vverb_str "Indent after a block statement." | endif
             endif
         endif
-        " Indent after function/task/class/package/sequence/clocking/
-        " rule/method/interface/covergroup/property/program blocks
+        " Indent after task/class/package/sequence/clocking .. blocks
     elseif last_line =~ '^\s*\<\(task\|class\|package\)\>' ||
-                \ last_line =~ '^\s*\<\(sequence\|clocking\|rule\|method\|instance\|typeclass\)\>' ||
+                \ last_line =~ '^\s*\<\(sequence\|clocking\|rule\|instance\|typeclass\)\>' ||
                 \ last_line =~ '^\s*\(\w\+\s*:\)\=\s*\<covergroup\>' ||
                 \ last_line =~ '^\s*\<\(property\|program\)\>'
         if last_line !~ '\<end\>\s*' . vlog_comment . '*$' ||
                     \ last_line =~ '\(//\|/\*\).*\(;\|\<end\>\)\s*' . vlog_comment . '*$'
             let ind = ind + offset
             if vverb
-                echo vverb_str "Indent after function/task/class block statement."
+                echo vverb_str "Indent after task/class block statement."
             endif
         endif
 
-        " Indent after function/interface except when they are assigned in the
-        " same line
-    elseif last_line =~ '^\s*\<\(function\|interface\)\>' && last_line !~ '='
-        if last_line !~ '\<end\>\s*' . vlog_comment . '*$' ||
-                    \ last_line =~ '\(//\|/\*\).*\(;\|\<end\>\)\s*' . vlog_comment . '*$'
-            let ind = ind + offset
-            if vverb
-                echo vverb_str "Indent after function/interface block statement."
-            endif
-        endif
-
-        " Indent after module/function/task/specify/fork blocks
+        " Indent after module blocks
     elseif last_line =~ '^\s*\(\<extern\>\s*\)\=\<module\>'
         let ind = ind + indent_modules
         if vverb && indent_modules
@@ -186,7 +174,7 @@ function! GetBSVIndent(linenum)
         endif
 
         " Indent after a 'begin' statement
-    elseif last_line =~ '\(\<begin\>\)\(\s*:\s*\w\+\)*' . vlog_comment . '*$' &&
+    elseif last_line =~ '\(\<\(begin\|action\|actionvalue\)\>\)\(\s*:\s*\w\+\)*' . vlog_comment . '*$' &&
                 \ last_line !~ '\(//\|/\*\).*\(\<begin\>\)' &&
                 \ ( last_line2 !~ vlog_openstat . '\s*' . vlog_comment . '*$' ||
                 \ last_line2 =~ '^\s*[^=!]\+\s*:\s*' . vlog_comment . '*$' )
@@ -252,8 +240,8 @@ function! GetBSVIndent(linenum)
     " De-indent on the end of the block
     " join/end/endcase/endfunction/endtask/endspecify
     if curr_line =~ '^\s*\<\(join\|join_any\|join_none\|\|end\|endcase\|while\)\>' ||
-                \ curr_line =~ '^\s*\<\(endfunction\|endtask\|endspecify\|endclass\)\>' ||
-                \ curr_line =~ '^\s*\<\(endpackage\|endsequence\|endclocking\|endrule\|endmethod\|endinterface\|endinstance\|endtypeclass\)\>' ||
+                \ curr_line =~ '^\s*\<\(endaction\|endactionvalue\|endtask\|endspecify\|endclass\)\>' ||
+                \ curr_line =~ '^\s*\<\(endpackage\|endsequence\|endclocking\|endrule\|endinstance\|endtypeclass\)\>' ||
                 \ curr_line =~ '^\s*\<\(endgroup\|endproperty\|endprogram\)\>' ||
                 \ curr_line =~ '^\s*}'
         let ind = ind - offset
@@ -266,8 +254,8 @@ function! GetBSVIndent(linenum)
 
         " De-indent on a stand-alone 'begin'
     elseif curr_line =~ '^\s*\<begin\>'
-        if last_line !~ '^\s*\<\(function\|task\|specify\|module\|class\|package\)\>' ||
-                    \ last_line !~ '^\s*\<\(sequence\|clocking\|rule\|method\|interface\|covergroup\)\>' ||
+        if last_line !~ '^\s*\<\(action\|actionvalue\|task\|specify\|module\|class\|package\)\>' ||
+                    \ last_line !~ '^\s*\<\(sequence\|clocking\|rule\|covergroup\)\>' ||
                     \ last_line !~ '^\s*\<\(property\|program\)\>' &&
                     \ last_line !~ '^\s*\()*\s*;\|)\+\)\s*' . vlog_comment . '*$' &&
                     \ ( last_line =~
