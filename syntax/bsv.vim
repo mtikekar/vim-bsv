@@ -59,7 +59,6 @@ syntax keyword bsvPreproc `include `line `define `undef `resetall `ifdef `ifndef
 
 syntax keyword bsvConditional if else case matches
 syntax keyword bsvRepeat for while
-<<<<<<< HEAD
 syntax keyword bsvKeyword import export dependencies determines
 syntax keyword bsvKeyword typedef enum struct deriving tagged union let matches match
 syntax keyword bsvKeyword module rule function instance typeclass interface method rules return action actionvalue begin package
