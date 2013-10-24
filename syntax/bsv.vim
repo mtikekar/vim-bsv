@@ -19,6 +19,9 @@ endif
 syntax match bsvAssign "<-"
 syntax match bsvAssign "<="
 
+syntax match bsvOperator "?"
+syntax match bsvOperator ":"
+
 " comments (must be before operators, or else / gets marked as an operator)
 syntax keyword bsvTodo XXX FIXME TODO contained
 syntax match   bsvComment "//.*$" contains=bsvTodo
@@ -117,4 +120,5 @@ highlight link bsvAttributes SpecialComment
 highlight link bsvAttribute Keyword
 highlight link bsvSystemTask Function
 
+highlight link bsvOperator Operator
 let b:current_syntax = "bsv"
