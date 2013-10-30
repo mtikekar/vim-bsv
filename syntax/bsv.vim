@@ -18,6 +18,7 @@ endif
 
 syntax match bsvAssign "<-"
 syntax match bsvAssign "<="
+syntax match bsvAssign "="
 
 syntax match bsvOperator "?"
 syntax match bsvOperator ":"

@@ -3,11 +3,13 @@ if exists('g:no_bsv_conceal') || !has('conceal') || &enc != 'utf-8' || !has('gui
     finish
 endif
 
-syntax match bsvNiceOperator "!=" conceal cchar=≢
-syntax match bsvNiceOperator "=\@<!===\@!" conceal cchar=≡
+syntax match bsvNiceOperator "!=" conceal cchar=≠
+syntax match bsvNiceOperator "==" conceal cchar=≡
 syntax match bsvNiceOperator "<-" conceal cchar=←
-syntax match bsvNiceOperator "&&" conceal cchar=∧
+syntax match bsvNiceOperator "&\@<!&&&\@!" conceal cchar=∧
 syntax match bsvNiceOperator "||" conceal cchar=∨
+syntax match bsvNiceOperator "<<" conceal cchar=≪
+syntax match bsvNiceOperator ">>" conceal cchar=≫
 syntax match bsvNiceOperator ">=" conceal cchar=≥
 syntax match bsvNiceOperator "<=" conceal cchar=⇐
 " Register write is more common than check for less-equal.

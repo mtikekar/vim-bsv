@@ -2,7 +2,7 @@ if exists("b:did_ftplugin")
     finish
 endif
 let b:did_ftplugin = 1
-set textwidth=100
+" set textwidth=100
 set colorcolumn=77
 
 " colorscheme bsv
