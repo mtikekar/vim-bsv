@@ -1,5 +1,5 @@
 " we need the conceal feature (vim ≥ 7.3)
-if exists('g:no_bsv_conceal') || !has('conceal') || &enc != 'utf-8' || !has('gui_running')
+if exists('g:no_bsv_conceal') || !has('conceal') || &enc != 'utf-8' || &diff
     finish
 endif
 

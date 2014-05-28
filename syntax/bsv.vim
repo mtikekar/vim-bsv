@@ -42,21 +42,22 @@ syntax match   bsvNumber '\v<\d[0-9_]*(.\d[0-9]*)=([eE][+-]=[0-9_]+)=>'
 
 " types
 syntax keyword bsvDatatypes Bit UInt Int int Integer Bool Real String Fmt Void Maybe Ordering Clock Reset Inout Action ActionValue Rules File BuffIndex
-syntax keyword bsvDatatypes Tuple2 Tuple3 Tuple4 Tuple5 Tuple6 Tuple7 Tuple8
+syntax keyword bsvDatatypes Tuple2 Tuple3 Tuple4 Tuple5 Tuple6 Tuple7 Tuple8 T2 T3
 syntax keyword bsvDatatypes TAdd TSub TMul TDiv TLog TExp TMax TMin
 syntax keyword bsvDatatypes Add Mul Div Log Max
 
-syntax keyword bsvDatatypes Vector List Valid Invalid Complex FixedPoint InvalidFile Stmt
+syntax keyword bsvDatatypes Vector V V2 V3 List Valid Invalid Complex FixedPoint InvalidFile Stmt
 syntax keyword bsvInterfaces Reg FIFO FIFOF RegFile Get Put Server Client Empty
 
 " type functions
-syntax keyword bsvTypeclasses Bits Eq Literal RealLiteral Arith Ord Bounded Bitwise BitReduction BitExtend
+syntax keyword bsvTypeclasses Bits Eq Literal RealLiteral Arith Ord Bounded Bitwise BitReduction BitExtend FShow
 syntax keyword bsvTypeFunction TAdd TSub TMul TDiv TLog TExp TMax TMin
 syntax keyword bsvTypeFunction Add Mul Div Log Max Min
 syntax keyword bsvTypeFunction valueof valueOf SizeOf fromInteger
 
 " inbuilt functions
 syntax keyword bsvFunction tpl_1 tpl_2 tpl_3 tpl_4 tpl_5 tpl_6 tpl_7 tpl_8 
+syntax keyword bsvFunction tuple2 tuple3 tuple4 tuple5 tuple6 tuple7 tuple8 t2 t3
 
 setlocal iskeyword+=`
 syntax keyword bsvPreproc `include `line `define `undef `resetall `ifdef `ifndef `elsif `else `endif
@@ -64,7 +65,7 @@ syntax keyword bsvPreproc `include `line `define `undef `resetall `ifdef `ifndef
 syntax keyword bsvConditional if else case matches
 syntax keyword bsvRepeat for while
 syntax keyword bsvKeyword import export dependencies determines
-syntax keyword bsvKeyword typedef enum struct deriving tagged union let matches match
+syntax keyword bsvKeyword typedef enum struct deriving tagged union let matches match default
 syntax keyword bsvKeyword module rule function instance typeclass interface method rules return action actionvalue begin package
 syntax keyword bsvKeyword numeric type provisos seq par
 syntax keyword bsvKeyword pack unpack valueof valueOf fromInteger when
