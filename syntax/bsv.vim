@@ -41,7 +41,7 @@ syntax match   bsvNumber #\v(\+|\-|\d*)'([bB][01_]+|[oO][0-7_]+|[dD][0-9_]+|[hH]
 syntax match   bsvNumber '\v<\d[0-9_]*(.\d[0-9]*)=([eE][+-]=[0-9_]+)=>'
 
 " types
-syntax keyword bsvDatatypes Bit UInt Int int Integer Bool Real String Fmt Void Maybe Ordering Clock Reset Inout Action ActionValue Rules File BuffIndex
+syntax keyword bsvDatatypes Bit UInt Int int Integer Bool Real String Fmt void Maybe Ordering Clock Reset Inout Action ActionValue Rules File BuffIndex
 syntax keyword bsvDatatypes Tuple2 Tuple3 Tuple4 Tuple5 Tuple6 Tuple7 Tuple8 T2 T3
 syntax keyword bsvDatatypes TAdd TSub TMul TDiv TLog TExp TMax TMin
 syntax keyword bsvDatatypes Add Mul Div Log Max
