@@ -85,10 +85,14 @@ function! s:NumNewOpened(line)
     return nnewopened
 endfunction
 
+function! s:IsComment(lnum, line)
+    return synIDattr(synID(a:lnum, match(a:line, '\v\S') + 1, 0), "name") ==# "bsvComment"
+endfunction
+
 function! s:PrevNonComment(lnum)
     let lnum = prevnonblank(a:lnum)
     let line = getline(lnum)
-    while lnum != 0 && line =~# '\v^\s*\/\/'
+    while lnum != 0 && s:IsComment(lnum, line)
         let lnum = prevnonblank(lnum - 1)
         let line = getline(lnum)
     endwhile
@@ -117,7 +121,7 @@ function! bsv#Indent()
     endif
 
     let line = getline(v:lnum)
-    if line =~# '\v^\s*\/\/'
+    if s:IsComment(v:lnum, line)
         return indent(v:lnum)
     endif
 
@@ -155,8 +159,8 @@ function! bsv#Indent()
     " to dedent if/for/else followed by single statements,
     " need to check line before previous
     let [pprevlnum, pprevline] = s:PrevNonComment(prevlnum - 1)
-    if pprevlnum != 0
-        ded += pprevline =~#'\v^\s*(if|else|for|while)>' && pprevline !~# '\v\;\s*$' && s:NumNewOpened(pprevline) == 0
+    if pprevlnum != 0 && pprevline =~#'\v^\s*(if|else|for|while)>' && pprevline !~# '\v\;\s*$' && s:NumNewOpened(pprevline) == 0
+        let ded += 1
     endif
 
     return indent(prevlnum) + (ind - ded) * &shiftwidth
