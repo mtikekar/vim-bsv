@@ -111,22 +111,26 @@ function! bsv#Indent()
 
     let ind = s:NumNewOpened(prevline)
     if ind ==# 0 | let ind += (prevline =~# '\v^\s*(rule|typeclass|instance)>') | endif
-    if ind ==# 0 | let ind += (prevline =~# '\v^\s*(function|module)>[^\=]*$') | endif
-    if ind ==# 0 | let ind += (prevline =~# '\v^\s*method>[^\=]*$') && s:InModule(prevlnum) | endif
+    if ind ==# 0 | let ind += (prevline =~# '\v^\s*(function|module)>((\s\=\s)@!.)*$') | endif
+    if ind ==# 0 | let ind += (prevline =~# '\v^\s*method>((\s\=\s)@!.)*$') && s:InModule(prevlnum) | endif
     " interface used as an expression: a = interface Put ... endinterface
     if ind ==# 0 | let ind += (prevline =~# '\v\=\s*interface>') | endif
     if ind ==# 0
         " indent all interfaces and in modules and top-level
         " indent subinterfaces in modules but not in top-level
-        if prevline =~# '\v^\s*interface>[^\=]*$'
-            if indent(v:lnum) == 0 || s:InModule(v:lnum)
+        if prevline =~# '\v^\s*interface>((\s\=\s)@!.)*$'
+            if indent(prevlnum) == 0 || s:InModule(prevlnum)
                 let ind += 1
             endif
         endif
     endif
     if ind ==# 0
         " indent if/for/else followed by single statements
-        if prevline =~#'\v^\s*(if|for|else)>' && prevline !~# '\v\;\s*$'
+        " doesn't handle multiple levels like:
+        " for ()
+        "   if ()
+        "     ()  // this will not be indented correctly
+        if prevline =~#'\v^\s*(if|else|for|while)>' && prevline !~# '\v\;\s*$'
             let ind += 1
         endif
     endif
@@ -139,7 +143,7 @@ function! bsv#Indent()
     " to dedent if/for/else followed by single statements,
     " need to check line before previous
     let pprevline = getline(prevnonblank(prevlnum - 1))
-    if pprevline =~#'\v^\s*(if|for|else)>' && pprevline !~# '\v\;\s*$' && len(split(pprevline, s:openExpr, 1)) == 1
+    if pprevline =~#'\v^\s*(if|else|for|while)>' && pprevline !~# '\v\;\s*$' && s:NumNewOpened(pprevline) == 0
         let ded += 1
     endif
 
