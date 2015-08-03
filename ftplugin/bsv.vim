@@ -4,8 +4,9 @@ endif
 let b:did_ftplugin = 1
 
 " In normal mode, % to jump cursor between matching pairs
-let s:match_pairs = '(:),{:},[:],rule:endrule,module:endmodule,method:endmethod,interface:endinterface,function:endfunction,case:endcase,begin:end'
-let s:match_sep = '\<'.substitute(s:match_pairs, ':', '\\>:\\<', 'g').'\>'
-let b:match_words = substitute(s:match_sep, ',', '\\>,\\<', 'g')
-"let b:delimitMate_matchpairs = s:match_pairs
+let b:match_words = '(:),{:},[:],\<begin\>:\<end\>,'
+let b:match_words .= substitute('action,actionvalue,case,seq,par,rules,rule,typeclass,instance,function,module,method,interface', '\v\w+', '\\<\0\\>:\\<end\0\\>', 'g')
 source $VIMRUNTIME/macros/matchit.vim
+
+let &l:dictionary = expand('<sfile>:p:h') . "/../bsv.words"
+setlocal complete+=k

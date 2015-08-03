@@ -16,7 +16,7 @@ if exists("b:did_indent")
 endif
 let b:did_indent = 1
 
-setlocal indentkeys=!^F,o,O,},),=end,*<Return>
+setlocal indentkeys=!^F,o,O,},),=end,0=begin,0=action,0=actionvalue,0=case,0=seq,0=par,0=rules,0=rule
 setlocal indentexpr=bsv#Indent()
 " for preserving alignment with spaces
 setlocal preserveindent
@@ -122,7 +122,7 @@ function! bsv#Indent()
     let ded = s:NumPrevClosed(line)
 
     if !ded
-        let ded += (line =~# '\v^\s*(endfunction|endmodule|endinterface|endmethod)>')
+        let ded += (line =~# '\v^\s*(endfunction|endmodule|endmethod|endinterface)>')
     endif
     " to dedent after if/for/else followed by single statements
     " handle nested cases using singlelinecond and while loop inside
