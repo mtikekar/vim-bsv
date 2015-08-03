@@ -83,22 +83,20 @@ function! bsv#Indent()
     endif
 
     let ind = s:NumNewOpened(prevline)
-    if ind == 0
+    let singlelinecond = 0
+    if !ind
         " indent if/for/else followed by single statements
-        " doesn't handle multiple levels like:
-        " for ()
-        "   if ()
-        "     ()  // this will not be indented correctly
         if prevline =~#'\v^\s*(if|else|for|while)>' && prevline !~# '\v\;\s*$'
             let ind += 1
+            let singlelinecond = 1
         endif
     endif
-    if ind == 0 | let ind += (prevline =~# '\v^\s*(rule|typeclass|instance)>') | endif
-    if ind == 0 | let ind += (prevline =~# '\v^\s*(function|module)>((\s\=\s)@!.)*$') | endif
-    if ind == 0 | let ind += (prevline =~# '\v^\s*method>((\s\=\s)@!.)*$') && s:InModule(prevlnum) | endif
+    if !ind | let ind += (prevline =~# '\v^\s*(rule|typeclass|instance)>') | endif
+    if !ind | let ind += (prevline =~# '\v^\s*(function|module)>((\s\=\s)@!.)*$') | endif
+    if !ind | let ind += (prevline =~# '\v^\s*method>((\s\=\s)@!.)*$') && s:InModule(prevlnum) | endif
     " interface used as an expression: a = interface Put ... endinterface
-    if ind == 0 | let ind += (prevline =~# '\v\=\s*interface>') | endif
-    if ind == 0
+    if !ind | let ind += (prevline =~# '\v\=\s*interface>') | endif
+    if !ind
         " indent all interfaces and in modules and top-level
         " indent subinterfaces in modules but not in top-level
         if prevline =~# '\v^\s*interface>((\s\=\s)@!.)*$'
@@ -110,14 +108,17 @@ function! bsv#Indent()
 
     let ded = s:NumPrevClosed(line)
 
-    if ded == 0
+    if !ded
         let ded += (line =~# '\v^\s*(endrule|endtypeclass|endinstance|endfunction|endmodule|endinterface|endmethod)>')
     endif
-    " to dedent if/for/else followed by single statements,
-    " need to check line before previous
-    let [pprevlnum, pprevline] = s:PrevNonComment(prevlnum - 1)
-    if pprevlnum != 0 && pprevline =~#'\v^\s*(if|else|for|while)>' && pprevline !~# '\v\;\s*$' && s:NumNewOpened(pprevline) == 0
-        let ded += 1
+    " to dedent after if/for/else followed by single statements
+    " handle nested cases
+    if !singlelinecond
+        let [plnum, pline] = s:PrevNonComment(prevlnum - 1)
+        while plnum != 0 && pline =~#'\v^\s*(if|else|for|while)>' && pline !~# '\v\;\s*$' && !s:NumNewOpened(pline)
+            let ded += 1
+            let [plnum, pline] = s:PrevNonComment(plnum - 1)
+        endwhile
     endif
 
     return indent(prevlnum) + (ind - ded) * &shiftwidth
