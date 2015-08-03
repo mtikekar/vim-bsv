@@ -10,82 +10,36 @@ setlocal indentexpr=bsv#Indent()
 setlocal preserveindent
 setlocal copyindent
 
-let s:openExpr = '\v(<begin>|<action>|<actionvalue>|<case>|<seq>|<par>|<rules>|\{|\()\zs'
-let s:closeExpr = '\v(<end>|<endaction>|<endactionvalue>|<endcase>|<endseq>|<endpar>|<endrules>|\}|\))\zs'
+let s:openExpr = '\v(<begin>|<action>|<actionvalue>|<case>|<seq>|<par>|<rules>|\{)'
+let s:closeExpr = '\v(<end>|<endaction>|<endactionvalue>|<endcase>|<endseq>|<endpar>|<endrules>|\})'
 
-function! s:TokenPositions(line, token_re)
-    " list of column numbers of tokens in line
-    let toksplits = split(a:line, a:token_re, 1)
-    unlet toksplits[-1]
-    let olist = []
-    let sum = 0
-    for val in toksplits
-        let sum += strlen(val)
-        call add(olist, sum)
-    endfor
-    return olist
-endfunction
-
-function! s:TokenList(line)
-    " Convert line to a list of 0s and 1s. 0 = open expr, 1 = close expr
-    let open_pos = s:TokenPositions(a:line, s:openExpr)
-    let close_pos = s:TokenPositions(a:line, s:closeExpr)
-    let toks = []
-    while len(open_pos) > 0 && len(close_pos) > 0
-       if open_pos[0] < close_pos[0]
-            call add(toks, 0)
-            unlet open_pos[0]
-        else
-            call add(toks, 1)
-            unlet close_pos[0]
-        endif
+function! s:TokenLine(line)
+    " Convert line to a string of ( and ) and delete all unmatched parentheses
+    let line = substitute(a:line, s:openExpr, '(', 'g')
+    let line = substitute(line, s:closeExpr, ')', 'g')
+    let line = substitute(line, '\v[^\(\)]', '', 'g')
+    let line1 = substitute(line, '\v\(\)', '', 'g')
+    while strlen(line) != strlen(line1)
+        let line = line1
+        let line1 = substitute(line, '\v\(\)', '', 'g')
     endwhile
-    call extend(toks, map(open_pos, '0'))
-    call extend(toks, map(close_pos, '1'))
-    return toks
+    return line
 endfunction
 
 function! s:NumPrevClosed(line)
     " how many exprs from previous lines closed in current line
-    let tok = s:TokenList(a:line)
-    let nopened = 0
-    let nprevclosed = 0
-    for val in tok
-        if val ==# 0
-            let nopened += 1
-        else
-            if nopened ==# 0
-                let nprevclosed += 1
-            else
-                let nopened -= 1
-            endif
-        endif
-    endfor
-
-    return nprevclosed
+    let line = s:TokenLine(a:line)
+    return strlen(substitute(line, '\v\(', '', 'g'))
 endfunction
 
 function! s:NumNewOpened(line)
     " how many new exprs opened in current line
-    let tok = s:TokenList(a:line)
-    let nclosed = 0
-    let nnewopened = 0
-    for val in reverse(tok)
-        if val ==# 1
-            let nclosed += 1
-        else
-            if nclosed ==# 0
-                let nnewopened += 1
-            else
-                let nclosed -= 1
-            endif
-        endif
-    endfor
-
-    return nnewopened
+    let line = s:TokenLine(a:line)
+    return strlen(substitute(line, '\v\)', '', 'g'))
 endfunction
 
 function! s:IsComment(lnum, line)
+    " synID is supposedly slow, avoid using as far as possible
     return synIDattr(synID(a:lnum, match(a:line, '\v\S') + 1, 0), "name") ==# "bsvComment"
 endfunction
 
@@ -104,43 +58,32 @@ function! s:InModule(lnum)
     let lnum = a:lnum
     let line = getline(lnum)
     while lnum != 0
-        if line =~# '\v^\s*module>((\s\=\s)@!.)*$'
+        if line =~# '\v^\s*module>((\s\=\s)@!.)*$' && !s:IsComment(lnum, line)
             return 1
-        elseif line =~# '\v^\s*endmodule>'
+        elseif line =~# '\v^\s*endmodule>' && !s:IsComment(lnum, line)
             return 0
         endif
-        let [lnum, line] = s:PrevNonComment(lnum - 1)
+        " can use PrevNonComment, but this way we call InComment less often
+        let lnum = prevnonblank(lnum - 1)
+        let line = getline(lnum)
     endwhile
     return 0
 endfunction
 
 function! bsv#Indent()
     let [prevlnum, prevline] = s:PrevNonComment(v:lnum - 1)
-    if prevlnum ==# 0
+    if prevlnum == 0
         return 0
     endif
 
     let line = getline(v:lnum)
     if s:IsComment(v:lnum, line)
+        " leave comments untouched
         return indent(v:lnum)
     endif
 
     let ind = s:NumNewOpened(prevline)
-    if ind ==# 0 | let ind += (prevline =~# '\v^\s*(rule|typeclass|instance)>') | endif
-    if ind ==# 0 | let ind += (prevline =~# '\v^\s*(function|module)>((\s\=\s)@!.)*$') | endif
-    if ind ==# 0 | let ind += (prevline =~# '\v^\s*method>((\s\=\s)@!.)*$') && s:InModule(prevlnum) | endif
-    " interface used as an expression: a = interface Put ... endinterface
-    if ind ==# 0 | let ind += (prevline =~# '\v\=\s*interface>') | endif
-    if ind ==# 0
-        " indent all interfaces and in modules and top-level
-        " indent subinterfaces in modules but not in top-level
-        if prevline =~# '\v^\s*interface>((\s\=\s)@!.)*$'
-            if indent(prevlnum) == 0 || s:InModule(prevlnum)
-                let ind += 1
-            endif
-        endif
-    endif
-    if ind ==# 0
+    if ind == 0
         " indent if/for/else followed by single statements
         " doesn't handle multiple levels like:
         " for ()
@@ -150,10 +93,24 @@ function! bsv#Indent()
             let ind += 1
         endif
     endif
+    if ind == 0 | let ind += (prevline =~# '\v^\s*(rule|typeclass|instance)>') | endif
+    if ind == 0 | let ind += (prevline =~# '\v^\s*(function|module)>((\s\=\s)@!.)*$') | endif
+    if ind == 0 | let ind += (prevline =~# '\v^\s*method>((\s\=\s)@!.)*$') && s:InModule(prevlnum) | endif
+    " interface used as an expression: a = interface Put ... endinterface
+    if ind == 0 | let ind += (prevline =~# '\v\=\s*interface>') | endif
+    if ind == 0
+        " indent all interfaces and in modules and top-level
+        " indent subinterfaces in modules but not in top-level
+        if prevline =~# '\v^\s*interface>((\s\=\s)@!.)*$'
+            if indent(prevlnum) == 0 || s:InModule(prevlnum)
+                let ind += 1
+            endif
+        endif
+    endif
 
     let ded = s:NumPrevClosed(line)
 
-    if ded ==# 0
+    if ded == 0
         let ded += (line =~# '\v^\s*(endrule|endtypeclass|endinstance|endfunction|endmodule|endinterface|endmethod)>')
     endif
     " to dedent if/for/else followed by single statements,
