@@ -85,29 +85,41 @@ function! s:NumNewOpened(line)
     return nnewopened
 endfunction
 
+function! s:PrevNonComment(lnum)
+    let lnum = prevnonblank(a:lnum)
+    let line = getline(lnum)
+    while lnum != 0 && line =~# '\v^\s*\/\/'
+        let lnum = prevnonblank(lnum - 1)
+        let line = getline(lnum)
+    endwhile
+    return [lnum, line]
+endfunction
+
 function! s:InModule(lnum)
     " is line in module scope
     let lnum = a:lnum
+    let line = getline(lnum)
     while lnum != 0
-        let line = getline(lnum)
         if line =~# '\v^\s*module>[^\=]*$'
             return 1
         elseif line =~# '\v^\s*endmodule>'
             return 0
         endif
-        let lnum = prevnonblank(lnum - 1)
+        let [lnum, line] = s:PrevNonComment(lnum - 1)
     endwhile
     return 0
 endfunction
 
 function! bsv#Indent()
-    let prevlnum = prevnonblank(v:lnum - 1)
+    let [prevlnum, prevline] = s:PrevNonComment(v:lnum - 1)
     if prevlnum ==# 0
         return 0
     endif
 
     let line = getline(v:lnum)
-    let prevline = getline(prevlnum)
+    if line =~# '\v^\s*\/\/'
+        return indent(v:lnum)
+    endif
 
     let ind = s:NumNewOpened(prevline)
     if ind ==# 0 | let ind += (prevline =~# '\v^\s*(rule|typeclass|instance)>') | endif
@@ -142,9 +154,9 @@ function! bsv#Indent()
     endif
     " to dedent if/for/else followed by single statements,
     " need to check line before previous
-    let pprevline = getline(prevnonblank(prevlnum - 1))
-    if pprevline =~#'\v^\s*(if|else|for|while)>' && pprevline !~# '\v\;\s*$' && s:NumNewOpened(pprevline) == 0
-        let ded += 1
+    let [pprevlnum, pprevline] = s:PrevNonComment(prevlnum - 1)
+    if pprevlnum != 0
+        ded += pprevline =~#'\v^\s*(if|else|for|while)>' && pprevline !~# '\v\;\s*$' && s:NumNewOpened(pprevline) == 0
     endif
 
     return indent(prevlnum) + (ind - ded) * &shiftwidth
