@@ -104,7 +104,7 @@ function! s:InModule(lnum)
     let lnum = a:lnum
     let line = getline(lnum)
     while lnum != 0
-        if line =~# '\v^\s*module>[^\=]*$'
+        if line =~# '\v^\s*module>((\s\=\s)@!.)*$'
             return 1
         elseif line =~# '\v^\s*endmodule>'
             return 0
