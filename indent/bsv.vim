@@ -16,7 +16,7 @@ if exists("b:did_indent")
 endif
 let b:did_indent = 1
 
-setlocal indentkeys=!^F,o,O,},),=end,0=begin,0=action,0=actionvalue,0=case,0=seq,0=par,0=rules,0=rule
+setlocal indentkeys=!^F,o,O,},),{,(,=end,0=begin,0=action,0=actionvalue,0=case,0=seq,0=par,0=rules,0=rule,*<Return>
 setlocal indentexpr=bsv#Indent()
 " for preserving alignment with spaces
 setlocal preserveindent
@@ -132,7 +132,7 @@ function! bsv#Indent()
             let ded += 1
             let [plnum, pline] = s:PrevNonComment(plnum - 1)
         endwhile
-    else
+    elseif singlelinecond
         " ind0 and this part handles
         " for/if/else ()
         " begin

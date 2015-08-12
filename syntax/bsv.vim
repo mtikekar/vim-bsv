@@ -61,13 +61,11 @@ syntax keyword bsvKeyword schedule parameter enable ready clocked_by reset_by
 syntax keyword bsvScopeOpen begin action actionvalue case seq par rules rule typeclass instance function method package
 syntax keyword bsvScopeClose end endaction endactionvalue endcase endseq endpar endrules endrule endtypeclass endinstance endfunction endmodule endmethod endinterface endpackage nextgroup=bsvScopeIdentifier
 syntax match   bsvScopeIdentifier '\v:\S+' contained containedin=bsvScopeClose
-syntax keyword bsvScopeOpen interface nextgroup=bsvNewInterface
-syntax keyword bsvScopeOpen module nextgroup=bsvNewModule
+syntax match bsvScopeOpen '\v<(interface|module)>'
+syntax match bsvScopeOpen '\v^interface' nextgroup=bsvNewInterface
+syntax match bsvScopeOpen '\v^module' nextgroup=bsvNewModule
 
-"syntax match bsvInterfaceDecl '\v^interface\s+[A-Z][a-zA-Z0-9_]+' contains=bsvInterfaceName,bsvScopeOpen
 syntax match bsvNewInterface '\v\s+[A-Z][a-zA-Z0-9_]+' contained containedin=bsvScopeOpen
-
-"syntax match bsvModuleDecl '\v^module\s+[a-z][a-zA-Z0-9_]+' contains=bsvModuleName,bsvScopeOpen
 syntax match bsvNewModule '\v\s+[a-z][a-zA-Z0-9_]+' contained containedin=bsvScopeOpen
 
 " attributes
