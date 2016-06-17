@@ -1,22 +1,18 @@
 " Does not handle
 " 1. Alignment under bracket/parenthesis
-" 2. function (...)
-"      provisos (...)
-"      = ...;
-"      next_line; // indented wrong
-" 3. if ()
+" 2. if ()
 "      if ()
 "      begin
 "        ()
 "      end
-"      next_line;  // indented wrong. the first if is also closed here.
+"      next_line;  // indented wrong. the first 'if' should also close here.
 
 if exists("b:did_indent")
     finish
 endif
 let b:did_indent = 1
 
-setlocal indentkeys=!^F,o,O,},),{,(,=end,0=begin,0=action,0=actionvalue,0=case,0=seq,0=par,0=rules,0=rule,*<Return>
+setlocal indentkeys=!^F,o,O,},),{,(,=end,0=begin,0=action,0=actionvalue,0=case,0=seq,0=par,0=rules,0=rule,0=
 setlocal indentexpr=bsv#Indent()
 " for preserving alignment with spaces
 setlocal preserveindent
@@ -40,8 +36,9 @@ endfunction
 
 function! s:NumPrevClosed(line)
     " how many exprs from previous lines closed in current line
+    " assumes = at start of line is a multiline function declaration
     let line = s:TokenLine(a:line)
-    return strlen(substitute(line, '\v\(', '', 'g'))
+    return strlen(substitute(line, '\v\(', '', 'g')) + (a:line =~ '\v^\s*\=')
 endfunction
 
 function! s:NumNewOpened(line)
@@ -71,7 +68,7 @@ function! s:InModule(lnum)
     let line = getline(lnum)
     while lnum != 0
         if line =~# '\v^\s*module>((\s\=\s)@!.)*$' && !s:IsComment(lnum, line)
-            return 1
+            return getline(prevnonblank(lnum - 1)) !~# '\v^import \"BVI\"'
         elseif line =~# '\v^\s*endmodule>' && !s:IsComment(lnum, line)
             return 0
         endif
@@ -105,12 +102,13 @@ function! bsv#Indent()
             let singlelinecond = 1
         endif
     endif
-    if !ind | let ind += (prevline =~# '\v^\s*(function|module)>((\s\=\s)@!.)*$') | endif
+    if !ind | let ind += (prevline =~# '\v^\s*import \"BVI\"' && prevline !~# '\v\=$') | endif
+    if !ind | let ind += (prevline =~# '\v^\s*(function|module)>((\s\=(\s|$))@!.)*$') | endif
     if !ind | let ind += (prevline =~# '\v^\s*method>((\s\=\s)@!.)*$') && s:InModule(prevlnum) | endif
     " interface used as an expression: a = interface Put ... endinterface
     if !ind | let ind += (prevline =~# '\v\=\s*interface>') | endif
     if !ind
-        " indent all interfaces and in modules and top-level
+        " indent all interfaces in modules and top-level
         " indent subinterfaces in modules but not in top-level
         if prevline =~# '\v^\s*interface>((\s\=\s)@!.)*$'
             if indent(prevlnum) == 0 || s:InModule(prevlnum)
