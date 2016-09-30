@@ -4,16 +4,16 @@ endif
 let b:did_ftplugin = 1
 
 " In normal mode, % to jump cursor between matching pairs using matchit plugin
-let b:match_words = '(:),{:},[:],<begin>:<end>,'
-let b:match_words .= substitute('action,actionvalue,case,seq,par,rules,rule,typeclass,instance,function,module,method,interface', '\v\w+', '<\0>:<end\0>', 'g')
-let b:match_words = escape(b:match_words, '<>')
+let b:match_words = '<begin>:<end>,'
+let b:match_words .= '<(action|actionvalue|case|seq|par|rules|rule|typeclass|instance|function|module|method|interface)>:<end\1>'
+let b:match_words = escape(b:match_words, '<>()|')
 
 " tpope/vim-endwise settings
 let b:endwise_words = 'begin,action,actionvalue,case,seq,par,rules,rule,typeclass,instance,module'
 let b:endwise_addition = '\=submatch(0)=="begin"? "end": "end" . submatch(0)'
 let b:endwise_syngroups = 'bsvScopeOpen'
 
-let &l:dictionary = expand('<sfile>:p:h') . '/../bsv.words'
+let &l:dictionary = simplify(expand('<sfile>:p:h') . '/../bsv.words')
 setlocal complete+=k
 
 " Look for import/`include statements.
