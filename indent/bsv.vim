@@ -12,14 +12,14 @@ if exists("b:did_indent")
 endif
 let b:did_indent = 1
 
-setlocal indentkeys=!^F,o,O,},),{,(,=end,0=begin,0=action,0=actionvalue,0=case,0=seq,0=par,0=rules,0=rule,0=
+setlocal indentkeys=!^F,o,O,},),{,(,=end,0=begin,0=action,0=actionvalue,0=case,0=seq,0=par,0=rules,0=rule,0=package,0=
 setlocal indentexpr=bsv#Indent()
 " for preserving alignment with spaces
 setlocal preserveindent
 setlocal copyindent
 
-let s:openExpr = '\v(<begin>|<action>|<actionvalue>|<case>|<seq>|<par>|<rules>|<rule>|<typeclass>|<instance>|\{)'
-let s:closeExpr = '\v(<end>|<endaction>|<endactionvalue>|<endcase>|<endseq>|<endpar>|<endrules>|<endrule>|<endtypeclass>|<endinstance>|\})'
+let s:openExpr = '\v(<begin>|<package>|<action>|<actionvalue>|<case>|<seq>|<par>|<rules>|<rule>|<typeclass>|<instance>|\{)'
+let s:closeExpr = '\v(<end>|<endaction>|<endpackage>|<endactionvalue>|<endcase>|<endseq>|<endpar>|<endrules>|<endrule>|<endtypeclass>|<endinstance>|\})'
 
 function! s:TokenLine(line)
     " Convert line to a string of ( and ) and delete all unmatched parentheses
