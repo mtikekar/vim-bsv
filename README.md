@@ -1,5 +1,15 @@
 # Vim plugin for Bluespec SystemVerilog (BSV)
+## Installation using Vundle
+Place this in your `.vimrc`:
 
+`Plug 'mtikekar/vim-bsv'`
+
+… then run the following in Vim:
+```
+:source %
+:PlugInstall
+```
+## Features
 - Syntax highlighting
 - Autoindent
 - Autocomplete options:
